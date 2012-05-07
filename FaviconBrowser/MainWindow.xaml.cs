@@ -34,23 +34,23 @@ namespace FaviconBrowser
 
         private void GetButton_OnClick(object sender, RoutedEventArgs e)
         {
-            foreach (string domain in s_Domains)
-            {
-                AddAFavicon(domain);
-            }
+            AddRemainingFavicons(s_Domains, 0);
         }
 
-        private void AddAFavicon(string domain)
+        private void AddRemainingFavicons(List<string> domains, int i)
         {
             WebClient webClient = new WebClient();
-            webClient.DownloadDataCompleted += OnWebClientOnDownloadDataCompleted;
-            webClient.DownloadDataAsync(new Uri("http://" + domain + "/favicon.ico"));
-        }
+            webClient.DownloadDataCompleted += (o, args) =>
+                {
+                    Image imageControl = MakeImageControl(args.Result);
+                    m_WrapPanel.Children.Add(imageControl);
 
-        private void OnWebClientOnDownloadDataCompleted(object sender, DownloadDataCompletedEventArgs args)
-        {
-            Image imageControl = MakeImageControl(args.Result);
-            m_WrapPanel.Children.Add(imageControl);
+                    if (i + 1 < domains.Count)
+                    {
+                        AddRemainingFavicons(domains, i + 1);
+                    }
+                };
+            webClient.DownloadDataAsync(new Uri("http://" + domains[i] + "/favicon.ico"));
         }
 
         private static Image MakeImageControl(byte[] bytes)
