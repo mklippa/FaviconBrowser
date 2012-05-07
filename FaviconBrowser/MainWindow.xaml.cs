@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FaviconBrowser
 {
@@ -21,6 +12,20 @@ namespace FaviconBrowser
     /// </summary>
     public partial class MainWindow : Window
     {
+        private static readonly List<string> s_Domains = new List<string>
+                                                             {
+                                                                 "google.com",
+                                                                 "bing.com",
+                                                                 "oreilly.com",
+                                                                 "simple-talk.com",
+                                                                 "microsoft.com",
+                                                                 "facebook.com",
+                                                                 "twitter.com",
+                                                                 "reddit.com",
+                                                                 "baidu.com",
+                                                                 "bbc.co.uk"
+                                                             };
+
         public MainWindow()
         {
             InitializeComponent();
@@ -28,7 +33,10 @@ namespace FaviconBrowser
 
         private void GetButton_OnClick(object sender, RoutedEventArgs e)
         {
-            AddAFavicon("google.com");
+            foreach (string domain in s_Domains)
+            {
+                AddAFavicon(domain);
+            }
         }
 
         private void AddAFavicon(string domain)

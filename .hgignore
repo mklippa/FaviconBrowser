@@ -3,3 +3,4 @@ _ReSharper.FaviconBrowser
 FaviconBrowser/obj
 FaviconBrowser/bin
 *.suo
+*.user
