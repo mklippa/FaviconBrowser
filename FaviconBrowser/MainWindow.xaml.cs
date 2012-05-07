@@ -43,6 +43,12 @@ namespace FaviconBrowser
         {
             WebClient webClient = new WebClient();
             byte[] bytes = webClient.DownloadData("http://" + domain + "/favicon.ico");
+            Image imageControl = MakeImageControl(bytes);
+            m_WrapPanel.Children.Add(imageControl);
+        }
+
+        private static Image MakeImageControl(byte[] bytes)
+        {
             Image imageControl = new Image();
             BitmapImage bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -51,7 +57,7 @@ namespace FaviconBrowser
             imageControl.Source = bitmapImage;
             imageControl.Width = 16;
             imageControl.Height = 16;
-            m_WrapPanel.Children.Add(imageControl);
+            return imageControl;
         }
     }
 }
