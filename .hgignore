@@ -1,0 +1,5 @@
+syntax: glob
+_ReSharper.FaviconBrowser
+FaviconBrowser/obj
+FaviconBrowser/bin
+*.suo
