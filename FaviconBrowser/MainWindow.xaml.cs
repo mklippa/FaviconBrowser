@@ -39,10 +39,10 @@ namespace FaviconBrowser
             }
         }
 
-        private void AddAFavicon(string domain)
+        private async void AddAFavicon(string domain)
         {
             WebClient webClient = new WebClient();
-            byte[] bytes = webClient.DownloadData("http://" + domain + "/favicon.ico");
+            byte[] bytes = await webClient.DownloadDataTaskAsync("http://" + domain + "/favicon.ico");
             Image imageControl = MakeImageControl(bytes);
             m_WrapPanel.Children.Add(imageControl);
         }
