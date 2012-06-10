@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -31,11 +32,14 @@ namespace FaviconBrowser
             InitializeComponent();
         }
 
-        private void GetButton_OnClick(object sender, RoutedEventArgs e)
+        private async void GetButton_OnClick(object sender, RoutedEventArgs e)
         {
-            foreach (string domain in s_Domains)
+            if (await GetUserPermission())
             {
-                AddAFavicon(domain);
+                foreach (string domain in s_Domains)
+                {
+                    AddAFavicon(domain);
+                }
             }
         }
 
@@ -45,6 +49,22 @@ namespace FaviconBrowser
             byte[] bytes = await webClient.DownloadDataTaskAsync("http://" + domain + "/favicon.ico");
             Image imageControl = MakeImageControl(bytes);
             m_WrapPanel.Children.Add(imageControl);
+        }
+
+        private Task<bool> GetUserPermission()
+        {
+            // Make a TaskCompletionSource so we can return a puppet Task
+            TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
+
+            // Show the dialog
+            PermissionDialog dialog = new PermissionDialog();
+            dialog.Show();
+
+            // When the user is finished with the dialog, complete the Task using SetResult
+            dialog.Closed += delegate { tcs.SetResult(dialog.PermissionGranted); };
+
+            // Return the puppet Task, which isn't completed yet
+            return tcs.Task;
         }
 
         private static Image MakeImageControl(byte[] bytes)
