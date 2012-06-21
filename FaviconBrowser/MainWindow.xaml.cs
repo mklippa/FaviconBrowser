@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -31,19 +33,26 @@ namespace FaviconBrowser
             InitializeComponent();
         }
 
-        private void GetButton_OnClick(object sender, RoutedEventArgs e)
+        private async void GetButton_OnClick(object sender, RoutedEventArgs e)
         {
-            foreach (string domain in s_Domains)
+            IEnumerable<Task<Image>> tasks = s_Domains.Select(GetFavicon);
+            Task<Image[]> allTask = Task.WhenAll(tasks);
+            Image[] images = await allTask;
+            foreach (Image eachImage in images)
             {
-                AddAFavicon(domain);
+                AddAFavicon(eachImage);
             }
         }
 
-        private async void AddAFavicon(string domain)
+        private async Task<Image> GetFavicon(string domain)
         {
             WebClient webClient = new WebClient();
             byte[] bytes = await webClient.DownloadDataTaskAsync("http://" + domain + "/favicon.ico");
-            Image imageControl = MakeImageControl(bytes);
+            return MakeImageControl(bytes);
+        }
+
+        private void AddAFavicon(Image imageControl)
+        {
             m_WrapPanel.Children.Add(imageControl);
         }
 
